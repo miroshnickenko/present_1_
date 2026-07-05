@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Региональный отчёт — год к году</title>
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --border:rgba(20,20,20,0.08);
+    --ink:#141414; --ink-muted:#6B6B66; --grid:#E7E5DE;
+    --gray:#888780; --pink:#D4537E; --danger:#A32D2D; --radius:10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#161514; --surface:#1E1D1B; --border:rgba(255,255,255,0.10);
+      --ink:#F2F1EC; --ink-muted:#A7A59C; --grid:#33322E;
+      --gray:#B4B2A9; --pink:#ED93B1; --danger:#F09595; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:760px; margin:0 auto; padding:32px 20px 60px;}
+  header{margin-bottom:28px;}
+  header h1{font-size:20px; font-weight:600; margin:0 0 4px;}
+  header p{font-size:13px; color:var(--ink-muted); margin:0;}
+  .kpi-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px;}
+  .kpi{flex:1 1 180px; background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius);
+    padding:16px; opacity:0; animation:fadeUp .5s ease forwards;}
+  .kpi:nth-child(1){animation-delay:.05s;} .kpi:nth-child(2){animation-delay:.15s;} .kpi:nth-child(3){animation-delay:.25s;}
+  .kpi .label{font-size:12px; color:var(--ink-muted); margin-bottom:6px;}
+  .kpi .value{font-size:24px; font-weight:600;}
+  .kpi .value.accent{color:var(--pink);}
+  section{margin-bottom:40px; opacity:0; animation:fadeUp .6s ease forwards;}
+  section:nth-of-type(1){animation-delay:.3s;} section:nth-of-type(2){animation-delay:.4s;}
+  section:nth-of-type(3){animation-delay:.5s;} section:nth-of-type(4){animation-delay:.6s;}
+  section:nth-of-type(5){animation-delay:.7s;}
+  h2{font-size:15px; font-weight:600; margin:0 0 4px;}
+  .subtitle{font-size:12px; color:var(--ink-muted); margin:0 0 14px;}
+  .chart-box{position:relative; width:100%;}
+  .legend{display:flex; gap:16px; margin-top:10px; font-size:12px; color:var(--ink-muted); justify-content:center;}
+  .legend span{display:flex; align-items:center; gap:4px;}
+  .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{text-align:left; font-weight:600; color:var(--ink-muted); font-size:12px; padding:8px 6px; border-bottom:0.5px solid var(--border);}
+  td{padding:8px 6px; border-bottom:0.5px solid var(--border);}
+  td.num{text-align:right; font-variant-numeric:tabular-nums;}
+  tr.negative td.num.growth{color:var(--danger); font-weight:600;}
+  tr.best td.num.growth{color:var(--pink); font-weight:600;}
+  tr.new td.num.growth{color:var(--ink-muted); font-style:italic;}
+  footer{font-size:12px; color:var(--ink-muted); border-top:0.5px solid var(--border); padding-top:14px;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Региональный отчёт — год к году</h1>
+    <p>Выручка: по сети, без новых студий, по каждой студии · январь–июнь</p>
+  </header>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="label">Выручка за полгода</div>
+      <div class="value">£479,805</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Рост год-к-году</div>
+      <div class="value accent">+69.9%</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Рекордные месяцы</div>
+      <div class="value accent">Апрель · Май</div>
+    </div>
+  </div>
+
+  <section id="chart-dynamics">
+    <h2>Динамика выручки по месяцам</h2>
+    <div class="chart-box" style="height:300px;">
+      <canvas id="dynChart" role="img" aria-label="Линейный график динамики выручки по сети по месяцам за 2025 и 2026 год, с выделением рекордных апреля и мая"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="chart-network">
+    <h2>Выручка по сети (5 студий) — год к году</h2>
+    <div class="chart-box" style="height:320px;">
+      <canvas id="revChart" role="img" aria-label="Выручка по сети по месяцам 2025 и 2026 года"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="chart-organic">
+    <h2>Выручка без новых студий</h2>
+    <div class="chart-box" style="height:320px;">
+      <canvas id="orgChart" role="img" aria-label="Выручка без новых студий по месяцам 2025 и 2026 года"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="chart-studios">
+    <h2>Выручка по студиям — год к году</h2>
+    <div class="chart-box" style="height:360px;">
+      <canvas id="studioChart" role="img" aria-label="Выручка по каждой студии за первое полугодие, 2025 против 2026"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="growth-table">
+    <h2>Рост по студиям</h2>
+    <table>
+      <tr><th>Студия</th><th style="text-align:right">2025</th><th style="text-align:right">2026</th><th style="text-align:right">Рост</th></tr>
+      <tr class="best"><td>Wolverhampton</td><td class="num">£89,020</td><td class="num">£121,143</td><td class="num growth">+36.1%</td></tr>
+      <tr><td>Birmingham</td><td class="num">£146,601</td><td class="num">£166,752</td><td class="num growth">+13.7%</td></tr>
+      <tr class="new"><td>Bristol</td><td class="num">£2,510</td><td class="num">£98,983</td><td class="num growth">новая студия</td></tr>
+      <tr class="new"><td>Sheffield</td><td class="num">£0</td><td class="num">£62,959</td><td class="num growth">новая студия</td></tr>
+      <tr class="negative"><td>Walsall</td><td class="num">£44,296</td><td class="num">£29,968</td><td class="num growth">-32.3%</td></tr>
+    </table>
+  </section>
+
+  
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+(function(){
+var isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+var gray = isDark ? '#B4B2A9' : '#888780';
+var pink = isDark ? '#ED93B1' : '#D4537E';
+var grid = isDark ? '#33322E' : '#E7E5DE';
+var textColor = isDark ? '#A7A59C' : '#6B6B66';
+
+var accentRed = pink;
+
+// --- Dynamics chart: pretty trend line, 2025 vs 2026 ---
+var dyn2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,54713.20];
+var dyn2026 = [72004.75,73804.25,72729.40,76744.40,92275.40,92247.15];
+
+new Chart(document.getElementById('dynChart'), {
+  type:'line',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      { label:'2025', data:dyn2025, borderColor:gray, backgroundColor:'transparent',
+        borderWidth:1.5, borderDash:[4,4], pointRadius:3, pointBackgroundColor:gray,
+        tension:0.35, fill:false },
+      { label:'2026', data:dyn2026, borderColor:accentRed, backgroundColor:accentRed+'22',
+        borderWidth:2.5, pointRadius:[4,4,4,7,7,4], pointBackgroundColor:accentRed,
+        pointBorderColor: isDark ? '#1E1D1B' : '#FFFFFF', pointBorderWidth:2,
+        tension:0.35, fill:true }
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false,
+    animation:{duration:1000, easing:'easeOutQuart'},
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
+      x:{grid:{display:false}, ticks:{color:textColor}}
+    }}
+});
+
+// --- Chart 1: Network-wide YoY ---
+var net2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,54713.20];
+var net2026 = [72004.75,73804.25,72729.40,76744.40,92275.40,92247.15];
+var netGrowth = net2026.map(function(v,i){ return ((v-net2025[i])/net2025[i]*100).toFixed(1); });
+
+var netPlugin = {
+  id: 'netAnnotations',
+  afterDatasetsDraw: function(chart){
+    var ctx = chart.ctx;
+    var meta = chart.getDatasetMeta(1);
+    netGrowth.forEach(function(g,i){
+      var bar = meta.data[i]; if(!bar) return;
+      ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('+'+g+'%', bar.x, bar.y-8); ctx.restore();
+    });
+    var febBar = meta.data[1];
+    if(febBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('прошлый рекорд', febBar.x, febBar.y-24); ctx.restore(); }
+    [3,4].forEach(function(i){
+      var bar = meta.data[i]; if(!bar) return;
+      var x=bar.x, y=bar.y;
+      ctx.save(); ctx.strokeStyle=pink; ctx.fillStyle=pink; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x,y-34); ctx.lineTo(x,y-14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-4,y-19); ctx.lineTo(x,y-12); ctx.lineTo(x+4,y-19); ctx.stroke();
+      ctx.font='600 11px sans-serif'; ctx.textAlign='center'; ctx.fillText('рекорд', x, y-40);
+      ctx.restore();
+    });
+    var junBar = meta.data[5];
+    if(junBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('стабильность', junBar.x, junBar.y-24); ctx.restore(); }
+  }
+};
+
+new Chart(document.getElementById('revChart'), {
+  type:'bar',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      {label:'2025', data:net2025, backgroundColor:gray, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7},
+      {label:'2026', data:net2026, backgroundColor:pink, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7}
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:60}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
+      x:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[netPlugin]
+});
+
+// --- Chart 2: Organic-only YoY ---
+var org2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,52203.20];
+var org2026 = [49857.00,47531.00,44469.00,52771.00,63353.40,59882.25];
+var orgGrowth = org2026.map(function(v,i){ return ((v-org2025[i])/org2025[i]*100).toFixed(1); });
+
+var orgPlugin = {
+  id: 'orgAnnotations',
+  afterDatasetsDraw: function(chart){
+    var ctx = chart.ctx;
+    var meta = chart.getDatasetMeta(1);
+    orgGrowth.forEach(function(g,i){
+      var bar = meta.data[i]; if(!bar) return;
+      ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('+'+g+'%', bar.x, bar.y-8); ctx.restore();
+    });
+    var mayBar = meta.data[4];
+    if(mayBar){
+      var x=mayBar.x, y=mayBar.y;
+      ctx.save(); ctx.strokeStyle=pink; ctx.fillStyle=pink; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x,y-34); ctx.lineTo(x,y-14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-4,y-19); ctx.lineTo(x,y-12); ctx.lineTo(x+4,y-19); ctx.stroke();
+      ctx.font='600 11px sans-serif'; ctx.textAlign='center'; ctx.fillText('рекорд', x, y-40);
+      ctx.restore();
+    }
+    var junBar = meta.data[5];
+    if(junBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('2-й лучший', junBar.x, junBar.y-24); ctx.restore(); }
+  }
+};
+
+new Chart(document.getElementById('orgChart'), {
+  type:'bar',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      {label:'2025', data:org2025, backgroundColor:gray, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7},
+      {label:'2026', data:org2026, backgroundColor:pink, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7}
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:60}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
+      x:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[orgPlugin]
+});
+
+// --- Chart 3: Per-studio H1 comparison ---
+var studioLabels = ['Birmingham','Wolverhampton','Bristol','Sheffield','Walsall'];
+var studio2025 = [146600.81,89020.00,2510.00,0.00,44296.20];
+var studio2026 = [166752.40,121143.25,98982.70,62959.00,29968.00];
+
+var valuePlugin = {
+  id: 'valueLabels',
+  afterDatasetsDraw: function(chart){
+    var ctx = chart.ctx;
+    [0,1].forEach(function(dsIndex){
+      var meta = chart.getDatasetMeta(dsIndex);
+      var color = dsIndex===0 ? textColor : pink;
+      meta.data.forEach(function(bar, i){
+        var val = chart.data.datasets[dsIndex].data[i];
+        ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=color;
+        ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.fillText('£'+Math.round(val).toLocaleString('en-GB'), bar.x+6, bar.y);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+new Chart(document.getElementById('studioChart'), {
+  type:'bar',
+  data:{ labels:studioLabels,
+    datasets:[
+      {label:'H1 2025', data:studio2025, backgroundColor:gray, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
+      {label:'H1 2026', data:studio2026, backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
+    ]},
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, layout:{padding:{right:30}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      x:{max:210000, grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}}},
+      y:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[valuePlugin]
+});
+})();
+</script>
+</body>
+</html>
