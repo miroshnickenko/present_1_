@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Региональный отчёт — квартал к кварталу</title>
+<title>Региональный отчёт — год к году</title>
 <style>
   :root{
     --bg:#FAFAF8; --surface:#FFFFFF; --border:rgba(20,20,20,0.08);
     --ink:#141414; --ink-muted:#6B6B66; --grid:#E7E5DE;
-    --wine:#72243E; --pink:#D4537E; --danger:#A32D2D; --radius:10px;
+    --gray:#888780; --pink:#D4537E; --danger:#A32D2D; --radius:10px;
   }
   @media (prefers-color-scheme: dark){
     :root{ --bg:#161514; --surface:#1E1D1B; --border:rgba(255,255,255,0.10);
       --ink:#F2F1EC; --ink-muted:#A7A59C; --grid:#33322E;
-      --wine:#F09595; --pink:#ED93B1; --danger:#F09595; }
+      --gray:#B4B2A9; --pink:#ED93B1; --danger:#F09595; }
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--ink);
@@ -33,7 +33,9 @@
   section:nth-of-type(1){animation-delay:.3s;} section:nth-of-type(2){animation-delay:.4s;}
   section:nth-of-type(3){animation-delay:.5s;} section:nth-of-type(4){animation-delay:.6s;}
   section:nth-of-type(5){animation-delay:.7s;} section:nth-of-type(6){animation-delay:.8s;}
-  h2{font-size:15px; font-weight:600; margin:0 0 14px;}
+  section:nth-of-type(7){animation-delay:.9s;} section:nth-of-type(8){animation-delay:1s;}
+  h2{font-size:15px; font-weight:600; margin:0 0 4px;}
+  .subtitle{font-size:12px; color:var(--ink-muted); margin:0 0 14px;}
   .chart-box{position:relative; width:100%;}
   .legend{display:flex; gap:16px; margin-top:10px; font-size:12px; color:var(--ink-muted); justify-content:center;}
   .legend span{display:flex; align-items:center; gap:4px;}
@@ -42,8 +44,10 @@
   th{text-align:left; font-weight:600; color:var(--ink-muted); font-size:12px; padding:8px 6px; border-bottom:0.5px solid var(--border);}
   td{padding:8px 6px; border-bottom:0.5px solid var(--border);}
   td.num{text-align:right; font-variant-numeric:tabular-nums;}
+  tr.negative td.num.growth{color:var(--danger); font-weight:600;}
   tr.best td.num.growth{color:var(--pink); font-weight:600;}
-  tr.flat td.num.growth{color:var(--ink-muted); font-weight:600;}
+  tr.new td.num.growth{color:var(--ink-muted); font-style:italic;}
+  footer{font-size:12px; color:var(--ink-muted); border-top:0.5px solid var(--border); padding-top:14px;}
   @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 </style>
 </head>
@@ -51,73 +55,95 @@
 <div class="wrap">
 
   <header>
-    <h1>Региональный отчёт — квартал к кварталу</h1>
-    <p>Выручка: Q1 2026 vs Q2 2026 · по сети, по каждой студии, обучение, услуги, направления</p>
+    <h1>Региональный отчёт — год к году</h1>
+    <p>Выручка: по сети, без новых студий, по каждой студии, обучение, услуги, направления · январь–июнь</p>
   </header>
 
   <div class="kpi-row">
     <div class="kpi">
-      <div class="label">Выручка Q1 2026</div>
-      <div class="value">£218,538</div>
+      <div class="label">Выручка за полгода</div>
+      <div class="value">£479,805</div>
     </div>
     <div class="kpi">
-      <div class="label">Выручка Q2 2026</div>
-      <div class="value">£261,267</div>
+      <div class="label">Рост год-к-году</div>
+      <div class="value accent">+69.9%</div>
     </div>
     <div class="kpi">
-      <div class="label">Рост Q1 → Q2</div>
-      <div class="value accent">+19.6%</div>
+      <div class="label">Рекордные месяцы</div>
+      <div class="value accent">Апрель · Май</div>
     </div>
   </div>
 
-  <section id="chart-network">
-    <h2>Выручка по сети (5 студий) — Q1 vs Q2</h2>
-    <div class="chart-box" style="height:260px;">
-      <canvas id="qNetChart" role="img" aria-label="Сравнение суммарной выручки по сети за квартал 1 и квартал 2 2026 года, рост 19.6 процента"></canvas>
+  <section id="chart-dynamics">
+    <h2>Динамика выручки по месяцам</h2>
+    <div class="chart-box" style="height:300px;">
+      <canvas id="dynChart" role="img" aria-label="Линейный график динамики выручки по сети по месяцам за 2025 и 2026 год, с выделением рекордных апреля и мая"></canvas>
     </div>
     <div class="legend">
-      <span><span class="swatch" style="background:var(--wine)"></span>Q1 2026</span>
-      <span><span class="swatch" style="background:var(--pink)"></span>Q2 2026</span>
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="chart-network">
+    <h2>Выручка по сети (5 студий) — год к году</h2>
+    <div class="chart-box" style="height:320px;">
+      <canvas id="revChart" role="img" aria-label="Выручка по сети по месяцам 2025 и 2026 года"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
+    </div>
+  </section>
+
+  <section id="chart-organic">
+    <h2>Выручка без новых студий</h2>
+    <div class="chart-box" style="height:320px;">
+      <canvas id="orgChart" role="img" aria-label="Выручка без новых студий по месяцам 2025 и 2026 года"></canvas>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
     </div>
   </section>
 
   <section id="chart-studios">
-    <h2>Выручка по студиям — Q1 vs Q2</h2>
+    <h2>Выручка по студиям — год к году</h2>
     <div class="chart-box" style="height:360px;">
-      <canvas id="qStudioChart" role="img" aria-label="Выручка по каждой студии, сравнение квартал 1 и квартал 2 2026 года"></canvas>
+      <canvas id="studioChart" role="img" aria-label="Выручка по каждой студии за первое полугодие, 2025 против 2026"></canvas>
     </div>
     <div class="legend">
-      <span><span class="swatch" style="background:var(--wine)"></span>Q1 2026</span>
-      <span><span class="swatch" style="background:var(--pink)"></span>Q2 2026</span>
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
     </div>
   </section>
 
   <section id="chart-training">
-    <h2>Обучение — Q1 vs Q2</h2>
+    <h2>Обучение — год к году</h2>
     <div class="chart-box" style="height:300px;">
-      <canvas id="trainingQoqChart" role="img" aria-label="Выручка от обучения по студиям, сравнение квартал 1 и квартал 2 2026 года"></canvas>
+      <canvas id="trainingYoyChart" role="img" aria-label="Выручка от обучения по студиям, сравнение квартал 2 2025 и квартал 2 2026 года"></canvas>
     </div>
     <div class="legend">
-      <span><span class="swatch" style="background:var(--wine)"></span>Q1 2026</span>
-      <span><span class="swatch" style="background:var(--pink)"></span>Q2 2026</span>
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
     </div>
   </section>
 
   <section id="chart-services">
-    <h2>Услуги — Q1 vs Q2</h2>
+    <h2>Услуги — год к году</h2>
     <div class="chart-box" style="height:300px;">
-      <canvas id="servicesQoqChart" role="img" aria-label="Выручка от услуг по студиям, сравнение квартал 1 и квартал 2 2026 года"></canvas>
+      <canvas id="servicesYoyChart" role="img" aria-label="Выручка от услуг по студиям, сравнение квартал 2 2025 и квартал 2 2026 года"></canvas>
     </div>
     <div class="legend">
-      <span><span class="swatch" style="background:var(--wine)"></span>Q1 2026</span>
-      <span><span class="swatch" style="background:var(--pink)"></span>Q2 2026</span>
+      <span><span class="swatch" style="background:var(--gray)"></span>2025</span>
+      <span><span class="swatch" style="background:var(--pink)"></span>2026</span>
     </div>
   </section>
 
   <section id="chart-directions">
     <h2>Направления выручки</h2>
-    <div class="chart-box" style="height:140px;">
-      <canvas id="directionsChart" role="img" aria-label="Микс выручки по направлениям — тату, пирсинг, обучение, продажи, прочее — квартал 1 против квартала 2 2026 года"></canvas>
+    <div class="chart-box" style="height:220px;">
+      <canvas id="directionsChart" role="img" aria-label="Микс выручки по направлениям — тату, пирсинг, обучение, продажи, прочее — за квартал 1 2025, квартал 2 2025, квартал 1 2026 и квартал 2 2026"></canvas>
     </div>
     <div class="legend">
       <span><span class="swatch" style="background:#3DA678"></span>Тату</span>
@@ -127,88 +153,173 @@
       <span><span class="swatch" style="background:#9B9B96"></span>Прочее</span>
     </div>
     <table style="margin-top:16px;">
-      <tr><th>Направление</th><th style="text-align:right">Q1 2026</th><th style="text-align:right">Q2 2026</th></tr>
-      <tr><td>Тату</td><td class="num">73%</td><td class="num">73%</td></tr>
-      <tr><td>Пирсинг</td><td class="num">5%</td><td class="num">5%</td></tr>
-      <tr><td>Обучение</td><td class="num">12%</td><td class="num">12%</td></tr>
-      <tr><td>Продажи</td><td class="num">5%</td><td class="num">6%</td></tr>
-      <tr><td>Прочее</td><td class="num">5%</td><td class="num">4%</td></tr>
+      <tr><th>Направление</th><th style="text-align:right">Q1 2025</th><th style="text-align:right">Q2 2025</th><th style="text-align:right">Q1 2026</th><th style="text-align:right">Q2 2026</th></tr>
+      <tr><td>Тату</td><td class="num">56%</td><td class="num">69%</td><td class="num">73%</td><td class="num">73%</td></tr>
+      <tr><td>Пирсинг</td><td class="num">6%</td><td class="num">5%</td><td class="num">5%</td><td class="num">5%</td></tr>
+      <tr><td>Обучение</td><td class="num">26%</td><td class="num">14%</td><td class="num">12%</td><td class="num">12%</td></tr>
+      <tr><td>Продажи</td><td class="num">7%</td><td class="num">6%</td><td class="num">5%</td><td class="num">6%</td></tr>
+      <tr><td>Прочее</td><td class="num">5%</td><td class="num">6%</td><td class="num">5%</td><td class="num">4%</td></tr>
     </table>
   </section>
 
   <section id="growth-table">
-    <h2>Рост по студиям, Q1 → Q2</h2>
+    <h2>Рост по студиям</h2>
     <table>
-      <tr><th>Студия</th><th style="text-align:right">Q1 2026</th><th style="text-align:right">Q2 2026</th><th style="text-align:right">Рост</th></tr>
-      <tr class="best"><td>Birmingham</td><td class="num">£67,980</td><td class="num">£98,772</td><td class="num growth">+45.3%</td></tr>
-      <tr><td>Walsall</td><td class="num">£13,403</td><td class="num">£16,565</td><td class="num growth">+23.6%</td></tr>
-      <tr><td>Sheffield</td><td class="num">£29,730</td><td class="num">£33,229</td><td class="num growth">+11.8%</td></tr>
-      <tr><td>Bristol</td><td class="num">£46,951</td><td class="num">£52,031</td><td class="num growth">+10.8%</td></tr>
-      <tr class="flat"><td>Wolverhampton</td><td class="num">£60,474</td><td class="num">£60,669</td><td class="num growth">+0.3%</td></tr>
+      <tr><th>Студия</th><th style="text-align:right">2025</th><th style="text-align:right">2026</th><th style="text-align:right">Рост</th></tr>
+      <tr class="best"><td>Wolverhampton</td><td class="num">£89,020</td><td class="num">£121,143</td><td class="num growth">+36.1%</td></tr>
+      <tr><td>Birmingham</td><td class="num">£146,601</td><td class="num">£166,752</td><td class="num growth">+13.7%</td></tr>
+      <tr class="new"><td>Bristol</td><td class="num">£2,510</td><td class="num">£98,983</td><td class="num growth">новая студия</td></tr>
+      <tr class="new"><td>Sheffield</td><td class="num">£0</td><td class="num">£62,959</td><td class="num growth">новая студия</td></tr>
+      <tr class="negative"><td>Walsall</td><td class="num">£44,296</td><td class="num">£29,968</td><td class="num growth">-32.3%</td></tr>
     </table>
   </section>
 
+  
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 (function(){
 var isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-var wine = isDark ? '#F09595' : '#72243E';
+var gray = isDark ? '#B4B2A9' : '#888780';
 var pink = isDark ? '#ED93B1' : '#D4537E';
 var grid = isDark ? '#33322E' : '#E7E5DE';
 var textColor = isDark ? '#A7A59C' : '#6B6B66';
 
-function growthPlugin(label){
-  return {
-    id: 'growthAnnotation',
-    afterDatasetsDraw: function(chart){
-      var ctx = chart.ctx;
-      var meta = chart.getDatasetMeta(0);
-      var b1 = meta.data[0], b2 = meta.data[1];
-      if(!b1||!b2) return;
-      var midX = (b1.x + b2.x)/2;
-      var topY = Math.min(b1.y, b2.y) - 34;
-      ctx.save();
-      ctx.strokeStyle = pink; ctx.fillStyle = pink; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(b1.x, b1.y-14); ctx.lineTo(midX, topY); ctx.lineTo(b2.x, b2.y-14);
-      ctx.stroke();
-      ctx.font = '600 12px sans-serif'; ctx.textAlign='center';
-      ctx.fillText(label, midX, topY-8);
-      ctx.restore();
-    }
-  };
-}
+var accentRed = pink;
 
-// --- Chart 1: Network Q1 vs Q2 ---
-new Chart(document.getElementById('qNetChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Q1 2026','Q2 2026'],
-    datasets: [{ data: [218538.40,261266.95], backgroundColor:[wine,pink], borderRadius:6, barThickness:70 }]
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    layout:{padding:{top:50}},
-    animation:{duration:900,easing:'easeOutQuart'},
+// --- Dynamics chart: pretty trend line, 2025 vs 2026 ---
+var dyn2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,54713.20];
+var dyn2026 = [72004.75,73804.25,72729.40,76744.40,92275.40,92247.15];
+
+new Chart(document.getElementById('dynChart'), {
+  type:'line',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      { label:'2025', data:dyn2025, borderColor:gray, backgroundColor:'transparent',
+        borderWidth:1.5, borderDash:[4,4], pointRadius:3, pointBackgroundColor:gray,
+        tension:0.35, fill:false },
+      { label:'2026', data:dyn2026, borderColor:accentRed, backgroundColor:accentRed+'22',
+        borderWidth:2.5, pointRadius:[4,4,4,7,7,4], pointBackgroundColor:accentRed,
+        pointBorderColor: isDark ? '#1E1D1B' : '#FFFFFF', pointBorderWidth:2,
+        tension:0.35, fill:true }
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false,
+    animation:{duration:1000, easing:'easeOutQuart'},
     plugins:{legend:{display:false}},
     scales:{
-      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}}},
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
       x:{grid:{display:false}, ticks:{color:textColor}}
-    }
-  },
-  plugins:[growthPlugin('+19.6%')]
+    }}
 });
 
-// --- Chart 2: Per-studio Q1 vs Q2 ---
+// --- Chart 1: Network-wide YoY ---
+var net2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,54713.20];
+var net2026 = [72004.75,73804.25,72729.40,76744.40,92275.40,92247.15];
+var netGrowth = net2026.map(function(v,i){ return ((v-net2025[i])/net2025[i]*100).toFixed(1); });
+
+var netPlugin = {
+  id: 'netAnnotations',
+  afterDatasetsDraw: function(chart){
+    var ctx = chart.ctx;
+    var meta = chart.getDatasetMeta(1);
+    netGrowth.forEach(function(g,i){
+      var bar = meta.data[i]; if(!bar) return;
+      ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('+'+g+'%', bar.x, bar.y-8); ctx.restore();
+    });
+    var febBar = meta.data[1];
+    if(febBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('прошлый рекорд', febBar.x, febBar.y-24); ctx.restore(); }
+    [3,4].forEach(function(i){
+      var bar = meta.data[i]; if(!bar) return;
+      var x=bar.x, y=bar.y;
+      ctx.save(); ctx.strokeStyle=pink; ctx.fillStyle=pink; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x,y-34); ctx.lineTo(x,y-14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-4,y-19); ctx.lineTo(x,y-12); ctx.lineTo(x+4,y-19); ctx.stroke();
+      ctx.font='600 11px sans-serif'; ctx.textAlign='center'; ctx.fillText('рекорд', x, y-40);
+      ctx.restore();
+    });
+    var junBar = meta.data[5];
+    if(junBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('стабильность', junBar.x, junBar.y-24); ctx.restore(); }
+  }
+};
+
+new Chart(document.getElementById('revChart'), {
+  type:'bar',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      {label:'2025', data:net2025, backgroundColor:gray, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7},
+      {label:'2026', data:net2026, backgroundColor:pink, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7}
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:60}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
+      x:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[netPlugin]
+});
+
+// --- Chart 2: Organic-only YoY ---
+var org2025 = [46084.31,46497.00,39886.50,43766.50,51479.50,52203.20];
+var org2026 = [49857.00,47531.00,44469.00,52771.00,63353.40,59882.25];
+var orgGrowth = org2026.map(function(v,i){ return ((v-org2025[i])/org2025[i]*100).toFixed(1); });
+
+var orgPlugin = {
+  id: 'orgAnnotations',
+  afterDatasetsDraw: function(chart){
+    var ctx = chart.ctx;
+    var meta = chart.getDatasetMeta(1);
+    orgGrowth.forEach(function(g,i){
+      var bar = meta.data[i]; if(!bar) return;
+      ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('+'+g+'%', bar.x, bar.y-8); ctx.restore();
+    });
+    var mayBar = meta.data[4];
+    if(mayBar){
+      var x=mayBar.x, y=mayBar.y;
+      ctx.save(); ctx.strokeStyle=pink; ctx.fillStyle=pink; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x,y-34); ctx.lineTo(x,y-14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-4,y-19); ctx.lineTo(x,y-12); ctx.lineTo(x+4,y-19); ctx.stroke();
+      ctx.font='600 11px sans-serif'; ctx.textAlign='center'; ctx.fillText('рекорд', x, y-40);
+      ctx.restore();
+    }
+    var junBar = meta.data[5];
+    if(junBar){ ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('2-й лучший', junBar.x, junBar.y-24); ctx.restore(); }
+  }
+};
+
+new Chart(document.getElementById('orgChart'), {
+  type:'bar',
+  data:{ labels:['янв','фев','мар','апр','май','июн'],
+    datasets:[
+      {label:'2025', data:org2025, backgroundColor:gray, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7},
+      {label:'2026', data:org2026, backgroundColor:pink, borderRadius:4, barPercentage:0.8, categoryPercentage:0.7}
+    ]},
+  options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:60}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000).toFixed(0)+'k';}}},
+      x:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[orgPlugin]
+});
+
+// --- Chart 3: Per-studio H1 comparison ---
+var studioLabels = ['Birmingham','Wolverhampton','Bristol','Sheffield','Walsall'];
+var studio2025 = [146600.81,89020.00,2510.00,0.00,44296.20];
+var studio2026 = [166752.40,121143.25,98982.70,62959.00,29968.00];
+
 var valuePlugin = {
   id: 'valueLabels',
   afterDatasetsDraw: function(chart){
     var ctx = chart.ctx;
     [0,1].forEach(function(dsIndex){
       var meta = chart.getDatasetMeta(dsIndex);
-      var color = dsIndex===0 ? wine : pink;
+      var color = dsIndex===0 ? textColor : pink;
       meta.data.forEach(function(bar, i){
         var val = chart.data.datasets[dsIndex].data[i];
         ctx.save(); ctx.font='500 10px sans-serif'; ctx.fillStyle=color;
@@ -220,51 +331,45 @@ var valuePlugin = {
   }
 };
 
-new Chart(document.getElementById('qStudioChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Birmingham','Wolverhampton','Bristol','Sheffield','Walsall'],
-    datasets: [
-      { label:'Q1 2026', data:[67980.00,60474.00,46951.40,29730.00,13403.00], backgroundColor:wine, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7 },
-      { label:'Q2 2026', data:[98772.40,60669.25,52031.30,33229.00,16565.00], backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7 }
-    ]
-  },
-  options: {
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    layout: { padding: { right: 30 } },
-    animation: { duration: 900, easing: 'easeOutQuart' },
-    plugins: { legend: { display:false } },
-    scales: {
-      x: { max: 115000, grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}} },
-      y: { grid:{display:false}, ticks:{color:textColor} }
-    }
-  },
-  plugins: [valuePlugin]
-});
-// --- Chart 3: Training (обучение) Q1 vs Q2 ---
-new Chart(document.getElementById('trainingQoqChart'), {
+new Chart(document.getElementById('studioChart'), {
   type:'bar',
-  data:{ labels:['Bristol','Birmingham','Walsall','Wolverhampton','Sheffield'],
+  data:{ labels:studioLabels,
     datasets:[
-      {label:'Q1 2026', data:[3050,9532,2280,4650,3901], backgroundColor:wine, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
-      {label:'Q2 2026', data:[11260,7380,5280,4729,1520], backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
+      {label:'H1 2025', data:studio2025, backgroundColor:gray, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
+      {label:'H1 2026', data:studio2026, backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
     ]},
   options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, layout:{padding:{right:30}},
     animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
     scales:{
-      x:{max:14000, grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}}},
+      x:{max:210000, grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}}},
+      y:{grid:{display:false}, ticks:{color:textColor}}
+    }},
+  plugins:[valuePlugin]
+});
+// --- Chart 4: Training (обучение) YoY by studio ---
+new Chart(document.getElementById('trainingYoyChart'), {
+  type:'bar',
+  data:{ labels:['Bristol','Birmingham','Walsall','Wolverhampton','Sheffield'],
+    datasets:[
+      {label:'2025', data:[0,13208,3743,4425,0], backgroundColor:gray, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
+      {label:'2026', data:[11260,7380,5280,4729,1520], backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
+    ]},
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, layout:{padding:{right:30}},
+    animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
+    scales:{
+      x:{max:16000, grid:{color:grid}, ticks:{color:textColor, callback:function(v){return '£'+(v/1000)+'k';}}},
       y:{grid:{display:false}, ticks:{color:textColor}}
     }},
   plugins:[valuePlugin]
 });
 
-// --- Chart 4: Services (услуги) Q1 vs Q2 ---
-new Chart(document.getElementById('servicesQoqChart'), {
+// --- Chart 5: Services (услуги) YoY by studio ---
+new Chart(document.getElementById('servicesYoyChart'), {
   type:'bar',
   data:{ labels:['Birmingham','Wolverhampton','Bristol','Sheffield','Walsall'],
     datasets:[
-      {label:'Q1 2026', data:[55114,52728,41089,24539,10175], backgroundColor:wine, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
-      {label:'Q2 2026', data:[82335,52121,36645,28333,9999], backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
+      {label:'2025', data:[58038,41417,2415,0,17155], backgroundColor:gray, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7},
+      {label:'2026', data:[82335,52121,36645,28333,9999], backgroundColor:pink, borderRadius:4, barPercentage:0.75, categoryPercentage:0.7}
     ]},
   options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, layout:{padding:{right:30}},
     animation:{duration:900, easing:'easeOutQuart'}, plugins:{legend:{display:false}},
@@ -274,16 +379,16 @@ new Chart(document.getElementById('servicesQoqChart'), {
     }},
   plugins:[valuePlugin]
 });
-// --- Chart 5: Revenue mix by direction, Q1 vs Q2 ---
+// --- Chart 6: Revenue mix by direction, 4 quarters ---
 new Chart(document.getElementById('directionsChart'), {
   type:'bar',
-  data:{ labels:['Q1 2026','Q2 2026'],
+  data:{ labels:['Q1 2025','Q2 2025','Q1 2026','Q2 2026'],
     datasets:[
-      {label:'Тату', data:[73,73], backgroundColor:'#3DA678'},
-      {label:'Пирсинг', data:[5,5], backgroundColor:'#4A90D9'},
-      {label:'Обучение', data:[12,12], backgroundColor:'#8B7FD6'},
-      {label:'Продажи', data:[5,6], backgroundColor:'#E8942E'},
-      {label:'Прочее', data:[5,4], backgroundColor:'#9B9B96'}
+      {label:'Тату', data:[56,69,73,73], backgroundColor:'#3DA678'},
+      {label:'Пирсинг', data:[6,5,5,5], backgroundColor:'#4A90D9'},
+      {label:'Обучение', data:[26,14,12,12], backgroundColor:'#8B7FD6'},
+      {label:'Продажи', data:[7,6,5,6], backgroundColor:'#E8942E'},
+      {label:'Прочее', data:[5,6,5,4], backgroundColor:'#9B9B96'}
     ]},
   options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
     animation:{duration:900, easing:'easeOutQuart'},
